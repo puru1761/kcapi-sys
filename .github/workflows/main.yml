@@ -23,7 +23,8 @@ jobs:
 
       - name: install autotools
         run: |
-          sudo apt-get install -y autotools-dev autoconf
+          sudo apt-get install -y autotools-dev autoconf llvm-dev
+          export LLVM_CONFIG_PATH="/usr/bin/llvm-config"
 
       - name: cargo build
         uses: actions-rs/cargo@v1
@@ -45,4 +46,3 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: clippy
-          args: -- -D warnings
