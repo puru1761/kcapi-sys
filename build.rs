@@ -34,7 +34,6 @@
 /*
  * Build instructions for the libkcapi low-level rust bindings
  */
-use autotools;
 use std::env;
 use std::fs;
 use std::path::PathBuf;
@@ -74,7 +73,7 @@ fn main() {
         .header(format!("{}", wrapper_h_path.display()))
         .parse_callbacks(Box::new(bindgen::CargoCallbacks))
         .generate()
-        .expect(format!("unable to generate bindings for lib{}", LIB).as_str());
+        .unwrap_or_else(|_| panic!("unable to generate bindings for lib{}", LIB));
 
     bindings
         .write_to_file(out_path.join("bindings.rs"))
