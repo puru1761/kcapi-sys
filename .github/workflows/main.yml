@@ -19,7 +19,7 @@ jobs:
 
       - name: install autotools
         run: |
-          sudo apt-get install -y autotools
+          sudo apt-get install -y autotools-dev autoconf
 
       - name: cargo build
         uses: actions-rs/cargo@v1
