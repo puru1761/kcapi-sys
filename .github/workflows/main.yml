@@ -8,7 +8,11 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+
+      - name: Checkout libkcapi-sys and Submodules
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
 
       - uses: actions-rs/toolchain@v1
         with:
