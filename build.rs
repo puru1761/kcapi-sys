@@ -31,25 +31,50 @@
  *
  */
 
- /*
-  * Build instructions for the libkcapi low-level rust bindings
-  */
+/*
+ * Build instructions for the libkcapi low-level rust bindings
+ */
+use autotools;
 use std::env;
+use std::fs;
 use std::path::PathBuf;
 
 const LIB: &str = "kcapi";
 
 fn main() {
+    let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
+    let include_path = out_path.join("include");
+    let wrapper_h_path = include_path.join("wrapper.h");
+    let dst = autotools::Config::new("libkcapi")
+        .reconf("-ivf")
+        .cflag("-O")
+        .build();
+
+    /*
+     * FIXME: Need to copy wrapper.h to OUT_DIR in order to make the
+     * wrappings compile. This is a hack for now until a more standard way
+     * is found to do this.
+     */
+    match fs::copy("wrapper.h", wrapper_h_path.clone()) {
+        Ok(_ok) => {}
+        Err(e) => {
+            panic!(
+                "Unable to copy wrapper.h to {}: {}",
+                wrapper_h_path.display(),
+                e
+            );
+        }
+    }
+
+    println!("cargo:rustc-link-search=native={}/lib", dst.display());
     println!("cargo:rustc-link-lib={}", LIB);
     println!("cargo:rerun-if-changed=wrapper.h");
 
     let bindings = bindgen::Builder::default()
-        .header("wrapper.h")
+        .header(format!("{}", wrapper_h_path.display()))
         .parse_callbacks(Box::new(bindgen::CargoCallbacks))
         .generate()
         .expect(format!("unable to generate bindings for lib{}", LIB).as_str());
-
-    let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
 
     bindings
         .write_to_file(out_path.join("bindings.rs"))
