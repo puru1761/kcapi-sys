@@ -1,6 +1,6 @@
 # The Raw Rust Bindings for libkcapi
 
-![CI Badge][https://github.com/puru1761/libkcapi-sys/actions/workflows/main.yml/badge.svg]
+![CI Badge](https://github.com/puru1761/libkcapi-sys/actions/workflows/main.yml/badge.svg)
 
 This repository contains the official raw low-level bindings for
 [libkcapi](https://github.com/smuellerDD/libkcapi/). *DO NOT* use these
