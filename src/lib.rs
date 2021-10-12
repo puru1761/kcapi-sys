@@ -412,6 +412,51 @@ mod tests {
     }
 
     #[test]
+    fn test_rng_generate() {
+        let mut seed = [0x41u8; 16];
+        let mut out = [0u8; 16];
+        let alg = CString::new("drbg_nopr_sha1").expect("Unable to create CString");
+
+        let mut ret: i64;
+        unsafe {
+            let mut handle =
+                Box::into_raw(Box::new(kcapi_handle { _unused: [0u8; 0] })) as *mut kcapi_handle;
+
+            ret = (kcapi_rng_init(&mut handle as *mut _, alg.as_ptr(), 0))
+                .try_into()
+                .expect("Failed to convert i32 to i64");
+            assert_eq!(ret, 0);
+
+            ret = (kcapi_rng_seed(handle, seed.as_mut_ptr(), seed.len() as u32))
+                .try_into()
+                .expect("Failed to convert i32 to i64");
+            assert_eq!(ret, 0);
+
+            ret = kcapi_rng_generate(handle, out.as_mut_ptr(), out.len() as u64);
+            assert_eq!(ret, out.len() as i64);
+
+            kcapi_rng_destroy(handle);
+        }
+    }
+
+    #[test]
+    fn test_rng_get_bytes() {
+        let mut out = [0u8; 16];
+        let mut out_next = [0u8; 16];
+
+        let mut ret: i64;
+        unsafe {
+            ret = kcapi_rng_get_bytes(out.as_mut_ptr(), out.len() as u64);
+            assert_eq!(ret, out.len() as i64);
+
+            ret = kcapi_rng_get_bytes(out_next.as_mut_ptr(), out_next.len() as u64);
+            assert_eq!(ret, out_next.len() as i64);
+
+            assert_ne!(out, out_next);
+        }
+    }
+
+    #[test]
     fn test_sha1() {
         let inp = [0x41u8; 16];
         let out = [0u8; SIZE_SHA1 as usize];
