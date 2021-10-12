@@ -50,7 +50,105 @@ mod tests {
     #![allow(dead_code)]
     #![allow(unused_assignments)]
     #![allow(deref_nullptr)]
+
+    use std::convert::TryInto;
+    use std::ffi::CString;
+
     include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
+
+    #[test]
+    fn test_md_init() {
+        let ret: i32;
+        let alg = CString::new("sha1").expect("Failed to convert CString");
+        unsafe {
+            let mut handle =
+                Box::into_raw(Box::new(kcapi_handle { _unused: [0u8; 0] })) as *mut kcapi_handle;
+            ret = kcapi_md_init(&mut handle as *mut _, alg.as_ptr(), 0);
+        }
+        assert_eq!(ret, 0);
+    }
+
+    #[test]
+    fn test_md_digest() {
+        let inp = [0x41u8; 16];
+        let mut out = [0u8; SIZE_SHA256 as usize];
+        let alg = std::ffi::CString::new("sha256").expect("Failed to convert to CString");
+        let out_exp = [
+            0x99, 0x12, 0x4, 0xfb, 0xa2, 0xb6, 0x21, 0x6d, 0x47, 0x62, 0x82, 0xd3, 0x75, 0xab,
+            0x88, 0xd2, 0xe, 0x61, 0x8, 0xd1, 0x9, 0xae, 0xcd, 0xed, 0x97, 0xef, 0x42, 0x4d, 0xdd,
+            0x11, 0x47, 0x6,
+        ];
+
+        let mut ret: i64;
+        unsafe {
+            let mut handle =
+                Box::into_raw(Box::new(kcapi_handle { _unused: [0u8; 0] })) as *mut kcapi_handle;
+
+            ret = (kcapi_md_init(&mut handle as *mut _, alg.as_ptr(), 0))
+                .try_into()
+                .expect("Failed to convert i32 to i64");
+            assert_eq!(ret, 0);
+
+            ret = (kcapi_md_digestsize(handle))
+                .try_into()
+                .expect("Failed to convert i32 into i64");
+            assert_eq!(ret, SIZE_SHA256 as i64);
+
+            ret = kcapi_md_digest(
+                handle,
+                inp.as_ptr(),
+                inp.len() as u64,
+                out.as_mut_ptr(),
+                out.len() as u64,
+            );
+            assert_eq!(ret, SIZE_SHA256 as i64);
+        }
+        assert_eq!(out_exp, out);
+    }
+
+    #[test]
+    fn test_md_keyed_digest() {
+        let inp = [0x41u8; 16];
+        let mut out = [0u8; SIZE_SHA256 as usize];
+        let key = [0u8; 16];
+        let alg = std::ffi::CString::new("hmac(sha256)").expect("Failed to convert to CString");
+        let out_exp = [
+            0x4a, 0x81, 0xd6, 0x13, 0xb0, 0xe, 0x91, 0x9e, 0x8a, 0xd9, 0x63, 0x78, 0x88, 0xe6,
+            0xa4, 0xfe, 0x8, 0x22, 0x4a, 0xb6, 0x48, 0x4b, 0xa, 0x37, 0x47, 0xa6, 0xa6, 0x62, 0xb6,
+            0xa2, 0x99, 0xd,
+        ];
+
+        let mut ret: i64;
+        unsafe {
+            let mut handle =
+                Box::into_raw(Box::new(kcapi_handle { _unused: [0u8; 0] })) as *mut kcapi_handle;
+
+            ret = (kcapi_md_init(&mut handle as *mut _, alg.as_ptr(), 0))
+                .try_into()
+                .expect("Failed to convert i32 to i64");
+            assert_eq!(ret, 0);
+
+            ret = (kcapi_md_digestsize(handle))
+                .try_into()
+                .expect("Failed to convert i32 into i64");
+            assert_eq!(ret, SIZE_SHA256 as i64);
+
+            ret = (kcapi_md_setkey(handle, key.as_ptr(), key.len() as u32))
+                .try_into()
+                .expect("Failed to convert i32 to i64");
+            assert_eq!(ret, 0);
+
+            ret = kcapi_md_digest(
+                handle,
+                inp.as_ptr(),
+                inp.len() as u64,
+                out.as_mut_ptr(),
+                out.len() as u64,
+            );
+            assert_eq!(ret, SIZE_SHA256 as i64);
+        }
+        assert_eq!(out_exp, out);
+    }
 
     #[test]
     fn test_sha1() {
