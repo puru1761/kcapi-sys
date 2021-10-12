@@ -151,6 +151,88 @@ mod tests {
     }
 
     #[test]
+    fn test_kcapi_skcipher_enc() {
+        let pt = [0x41u8; AES_BLOCKSIZE as usize];
+        let mut ct = [0u8; AES_BLOCKSIZE as usize];
+        let key = [0u8; AES256_KEYSIZE as usize];
+        let iv = [0u8; AES_BLOCKSIZE as usize];
+        let alg = CString::new("cbc(aes)").expect("Failed to convert to Cstring");
+
+        let ct_exp = [
+            0x7e, 0xe, 0x75, 0x77, 0xef, 0x9c, 0x30, 0xa6, 0xbf, 0xb, 0x25, 0xe0, 0x62, 0x1e, 0x82,
+            0x7e,
+        ];
+
+        let mut ret: i64;
+        unsafe {
+            let mut handle =
+                Box::into_raw(Box::new(kcapi_handle { _unused: [0u8; 0] })) as *mut kcapi_handle;
+
+            ret = (kcapi_cipher_init(&mut handle as *mut _, alg.as_ptr(), 0))
+                .try_into()
+                .expect("Failed to convert i32 to i64");
+            assert_eq!(ret, 0);
+
+            ret = (kcapi_cipher_setkey(handle, key.as_ptr(), key.len() as u32))
+                .try_into()
+                .expect("Failed to convert i32 to i64");
+
+            ret = kcapi_cipher_encrypt(
+                handle,
+                pt.as_ptr(),
+                pt.len() as u64,
+                iv.as_ptr(),
+                ct.as_mut_ptr(),
+                ct.len() as u64,
+                KCAPI_ACCESS_HEURISTIC as i32,
+            );
+            assert_eq!(ret, pt.len() as i64);
+        }
+        assert_eq!(ct_exp, ct);
+    }
+
+    #[test]
+    fn test_kcapi_skcipher_dec() {
+        let ct = [
+            0x7e, 0xe, 0x75, 0x77, 0xef, 0x9c, 0x30, 0xa6, 0xbf, 0xb, 0x25, 0xe0, 0x62, 0x1e, 0x82,
+            0x7e,
+        ];
+        let mut pt = [0u8; AES_BLOCKSIZE as usize];
+        let key = [0u8; AES256_KEYSIZE as usize];
+        let iv = [0u8; AES_BLOCKSIZE as usize];
+        let alg = CString::new("cbc(aes)").expect("Failed to convert to Cstring");
+
+        let pt_exp = [0x41u8; AES_BLOCKSIZE as usize];
+
+        let mut ret: i64;
+        unsafe {
+            let mut handle =
+                Box::into_raw(Box::new(kcapi_handle { _unused: [0u8; 0] })) as *mut kcapi_handle;
+
+            ret = (kcapi_cipher_init(&mut handle as *mut _, alg.as_ptr(), 0))
+                .try_into()
+                .expect("Failed to convert i32 to i64");
+            assert_eq!(ret, 0);
+
+            ret = (kcapi_cipher_setkey(handle, key.as_ptr(), key.len() as u32))
+                .try_into()
+                .expect("Failed to convert i32 to i64");
+
+            ret = kcapi_cipher_decrypt(
+                handle,
+                ct.as_ptr(),
+                ct.len() as u64,
+                iv.as_ptr(),
+                pt.as_mut_ptr(),
+                pt.len() as u64,
+                KCAPI_ACCESS_HEURISTIC as i32,
+            );
+            assert_eq!(ret, pt.len() as i64);
+        }
+        assert_eq!(pt_exp, pt);
+    }
+
+    #[test]
     fn test_sha1() {
         let inp = [0x41u8; 16];
         let out = [0u8; SIZE_SHA1 as usize];
