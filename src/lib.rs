@@ -457,6 +457,22 @@ mod tests {
     }
 
     #[test]
+    fn test_ackipher_enc() { /* NOT IMPLEMENTED: needs kernel patches */
+    }
+
+    #[test]
+    fn test_akcipher_dec() { /* NOT IMPLEMENTED: needs kernel patches */
+    }
+
+    #[test]
+    fn test_akcipher_sign() { /* NOT IMPLEMENTED: needs kernel patches */
+    }
+
+    #[test]
+    fn test_akcipher_verify() { /* NOT IMPLEMENTED: needs kernel patches */
+    }
+
+    #[test]
     fn test_sha1() {
         let inp = [0x41u8; 16];
         let out = [0u8; SIZE_SHA1 as usize];
