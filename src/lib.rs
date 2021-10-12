@@ -36,6 +36,7 @@
 #![allow(non_camel_case_types)]
 #![allow(non_snake_case)]
 #![allow(deref_nullptr)]
+#![allow(clippy::redundant_static_lifetimes)]
 include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 
 /*
@@ -50,6 +51,7 @@ mod tests {
     #![allow(dead_code)]
     #![allow(unused_assignments)]
     #![allow(deref_nullptr)]
+    #![allow(clippy::redundant_static_lifetimes)]
 
     use std::convert::TryInto;
     use std::ffi::CString;
