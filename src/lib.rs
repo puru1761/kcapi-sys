@@ -302,6 +302,19 @@ mod tests {
             .expect("Failed to convert i32 to i64");
             assert_eq!(ret, 0);
 
+            let outbuflen = kcapi_aead_outbuflen_enc(
+                handle,
+                pt.len() as u64,
+                assoclen as u64,
+                taglen as u64,
+            );
+            let inbuflen = kcapi_aead_inbuflen_enc(
+                handle,
+                pt.len() as u64,
+                assoclen as u64,
+                taglen as u64,
+            );
+
             ret = (kcapi_aead_setkey(handle, key.as_ptr(), key.len() as u32))
                 .try_into()
                 .expect("Failed to convert i32 to i64");
@@ -310,10 +323,10 @@ mod tests {
             ret = kcapi_aead_encrypt(
                 handle,
                 outbuf.as_ptr(),
-                (pt.len() + assoclen) as u64,
+                inbuflen,
                 newiv,
                 outbuf.as_mut_ptr(),
-                outbuf.len() as u64,
+                outbuflen,
                 KCAPI_ACCESS_HEURISTIC as i32,
             );
             assert_eq!(ret, outbuf.len() as i64);
@@ -392,6 +405,19 @@ mod tests {
             .expect("Failed to convert i32 to i64");
             assert_eq!(ret, 0);
 
+            let inbuflen = kcapi_aead_inbuflen_dec(
+                handle,
+                ct.len() as u64,
+                assoclen as u64,
+                taglen as u64,
+            );
+            let outbuflen = kcapi_aead_outbuflen_dec(
+                handle,
+                ct.len() as u64,
+                assoclen as u64,
+                taglen as u64,
+            );
+
             ret = (kcapi_aead_setkey(handle, key.as_ptr(), key.len() as u32))
                 .try_into()
                 .expect("Failed to convert i32 to i64");
@@ -400,10 +426,10 @@ mod tests {
             ret = kcapi_aead_decrypt(
                 handle,
                 outbuf.as_ptr(),
-                outbuf.len() as u64,
+                inbuflen,
                 newiv,
                 outbuf.as_mut_ptr(),
-                (outbuf.len() - assoclen) as u64,
+                outbuflen,
                 KCAPI_ACCESS_HEURISTIC as i32,
             );
             assert_eq!(ret, (outbuf.len() - assoclen) as i64);
