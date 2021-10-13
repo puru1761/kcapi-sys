@@ -39,9 +39,13 @@ mod tests {
     use crate::{
         kcapi_cipher_dec_aes_cbc, kcapi_cipher_dec_aes_ctr, kcapi_cipher_decrypt,
         kcapi_cipher_enc_aes_cbc, kcapi_cipher_enc_aes_ctr, kcapi_cipher_encrypt,
-        kcapi_cipher_init, kcapi_cipher_setkey, kcapi_handle, AES128_KEYSIZE, AES192_KEYSIZE,
-        AES256_KEYSIZE, AES_BLOCKSIZE, KCAPI_ACCESS_HEURISTIC,
+        kcapi_cipher_init, kcapi_cipher_setkey, kcapi_handle, KCAPI_ACCESS_HEURISTIC,
     };
+
+    const AES_BLOCKSIZE: usize = 16;
+    const AES128_KEYSIZE: usize = 16;
+    const AES192_KEYSIZE: usize = 24;
+    const AES256_KEYSIZE: usize = 32;
 
     #[test]
     fn test_kcapi_skcipher_enc() {

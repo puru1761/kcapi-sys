@@ -41,12 +41,15 @@ pub mod tests {
         kcapi_aead_decrypt, kcapi_aead_encrypt, kcapi_aead_inbuflen_dec, kcapi_aead_inbuflen_enc,
         kcapi_aead_init, kcapi_aead_outbuflen_dec, kcapi_aead_outbuflen_enc,
         kcapi_aead_setassoclen, kcapi_aead_setkey, kcapi_aead_settaglen, kcapi_handle,
-        kcapi_pad_iv, AES128_KEYSIZE, AES_BLOCKSIZE, KCAPI_ACCESS_HEURISTIC,
+        kcapi_pad_iv, KCAPI_ACCESS_HEURISTIC,
     };
+
+    const AES_BLOCKSIZE: usize = 16;
+    const AES128_KEYSIZE: usize = 16;
 
     #[test]
     fn test_aead_encrypt() {
-        const pt: [u8; AES_BLOCKSIZE as usize] = [
+        const pt: [u8; AES_BLOCKSIZE] = [
             0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41,
             0x41, 0x41,
         ];
@@ -69,8 +72,8 @@ pub mod tests {
             0xb2, 0x43,
         ];
 
-        let key = [0u8; AES128_KEYSIZE as usize];
-        let iv = [0u8; AES_BLOCKSIZE as usize];
+        let key = [0u8; AES128_KEYSIZE];
+        let iv = [0u8; AES_BLOCKSIZE];
         let alg = CString::new("gcm(aes)").expect("Failed to init CString");
 
         let mut outbuf = [0u8; pt.len() + taglen + assoclen];
@@ -141,7 +144,7 @@ pub mod tests {
 
     #[test]
     fn test_aead_decrypt() {
-        const ct: [u8; AES_BLOCKSIZE as usize] = [
+        const ct: [u8; AES_BLOCKSIZE] = [
             0x42, 0xc9, 0x9b, 0x8f, 0x21, 0xf7, 0xe2, 0xd3, 0xb2, 0x69, 0x83, 0xf8, 0x30, 0xf3,
             0xbf, 0x39,
         ];
@@ -163,8 +166,8 @@ pub mod tests {
             0x41, 0x41,
         ];
 
-        let key = [0u8; AES128_KEYSIZE as usize];
-        let iv = [0u8; AES_BLOCKSIZE as usize];
+        let key = [0u8; AES128_KEYSIZE];
+        let iv = [0u8; AES_BLOCKSIZE];
         let alg = CString::new("gcm(aes)").expect("Failed to init CString");
 
         let mut outbuf = [0u8; ct.len() + taglen + assoclen];
