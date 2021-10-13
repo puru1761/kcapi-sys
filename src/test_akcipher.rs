@@ -32,15 +32,21 @@
  *
  */
 
-#![allow(non_upper_case_globals)]
-#![allow(non_camel_case_types)]
-#![allow(non_snake_case)]
-#![allow(deref_nullptr)]
-#![allow(clippy::redundant_static_lifetimes)]
-include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
+#[cfg(test)]
+pub mod tests {
+    #[test]
+    fn test_ackipher_enc() { /* NOT IMPLEMENTED: needs kernel patches */
+    }
 
-mod test_aead;
-mod test_akcipher;
-mod test_md;
-mod test_rng;
-mod test_skcipher;
+    #[test]
+    fn test_akcipher_dec() { /* NOT IMPLEMENTED: needs kernel patches */
+    }
+
+    #[test]
+    fn test_akcipher_sign() { /* NOT IMPLEMENTED: needs kernel patches */
+    }
+
+    #[test]
+    fn test_akcipher_verify() { /* NOT IMPLEMENTED: needs kernel patches */
+    }
+}
