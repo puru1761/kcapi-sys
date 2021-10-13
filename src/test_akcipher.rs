@@ -35,18 +35,22 @@
 #[cfg(test)]
 pub mod tests {
     #[test]
+    #[ignore]
     fn test_ackipher_enc() { /* NOT IMPLEMENTED: needs kernel patches */
     }
 
     #[test]
+    #[ignore]
     fn test_akcipher_dec() { /* NOT IMPLEMENTED: needs kernel patches */
     }
 
     #[test]
+    #[ignore]
     fn test_akcipher_sign() { /* NOT IMPLEMENTED: needs kernel patches */
     }
 
     #[test]
+    #[ignore]
     fn test_akcipher_verify() { /* NOT IMPLEMENTED: needs kernel patches */
     }
 }
