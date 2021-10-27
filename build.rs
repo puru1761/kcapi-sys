@@ -46,6 +46,8 @@ fn main() {
     let wrapper_h_path = include_path.join("wrapper.h");
     let dst = autotools::Config::new("libkcapi")
         .reconf("-ivf")
+        .enable("lib-asym", None)
+        .enable("lib-kpp", None)
         .cflag("-O")
         .build();
 
