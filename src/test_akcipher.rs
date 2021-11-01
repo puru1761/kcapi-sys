@@ -266,6 +266,178 @@ pub mod tests {
 
     #[test]
     #[ignore]
-    fn test_akcipher_verify() { /* NOT IMPLEMENTED: needs kernel patches */
+    fn test_akcipher_verify() {
+        unsafe {
+            let mut handle =
+                Box::into_raw(Box::new(kcapi_handle { _unused: [0u8; 0] })) as *mut kcapi_handle;
+
+            let alg =
+                CString::new("pkcs1pad(rsa-generic,sha256)").expect("Failed to create CString");
+
+            let mut ret = crate::kcapi_akcipher_init(&mut handle as *mut _, alg.as_ptr(), 0);
+            assert_eq!(ret, 0);
+
+            let mut hash = [0u8; 32];
+            let mut ret64 = crate::kcapi_md_sha256(
+                pt.as_ptr(),
+                pt.len() as crate::size_t,
+                hash.as_mut_ptr(),
+                hash.len() as crate::size_t,
+            );
+            assert_eq!(hash.len(), ret64 as usize);
+
+            ret = crate::kcapi_akcipher_setpubkey(handle, pubkey.as_ptr(), pubkey.len() as u32);
+            assert_eq!(ret, 256);
+
+            let mut inp = Vec::new();
+            inp.extend(sig.iter().copied());
+            inp.extend(hash.iter().copied());
+
+            let mut out = [0u8; sig.len()];
+            ret64 = crate::kcapi_akcipher_verify(
+                handle,
+                inp.as_ptr(),
+                inp.len() as crate::size_t,
+                out.as_mut_ptr(),
+                out.len() as crate::size_t,
+                crate::KCAPI_ACCESS_HEURISTIC as ::std::os::raw::c_int,
+            );
+            assert_eq!(ret64, 0);
+        }
+    }
+
+    #[test]
+    #[ignore]
+    fn test_akcipher_verify_sig_fail() {
+        unsafe {
+            let mut handle =
+                Box::into_raw(Box::new(kcapi_handle { _unused: [0u8; 0] })) as *mut kcapi_handle;
+
+            let alg =
+                CString::new("pkcs1pad(rsa-generic,sha256)").expect("Failed to create CString");
+
+            let mut ret = crate::kcapi_akcipher_init(&mut handle as *mut _, alg.as_ptr(), 0);
+            assert_eq!(ret, 0);
+
+            let mut hash = [0u8; 32];
+            let mut ret64 = crate::kcapi_md_sha256(
+                pt.as_ptr(),
+                pt.len() as crate::size_t,
+                hash.as_mut_ptr(),
+                hash.len() as crate::size_t,
+            );
+            assert_eq!(hash.len(), ret64 as usize);
+
+            ret = crate::kcapi_akcipher_setpubkey(handle, pubkey.as_ptr(), pubkey.len() as u32);
+            assert_eq!(ret, 256);
+
+            let mut inp = Vec::new();
+            inp.extend(sig.iter().copied());
+            inp[sig.len() - 1] ^= 0x01;
+            inp.extend(hash.iter().copied());
+
+            let mut out = [0u8; sig.len()];
+            ret64 = crate::kcapi_akcipher_verify(
+                handle,
+                inp.as_ptr(),
+                inp.len() as crate::size_t,
+                out.as_mut_ptr(),
+                out.len() as crate::size_t,
+                crate::KCAPI_ACCESS_HEURISTIC as ::std::os::raw::c_int,
+            );
+            assert!(ret64 < 0);
+        }
+    }
+
+    #[test]
+    #[ignore]
+    fn test_akcipher_verify_digest_fail() {
+        unsafe {
+            let mut handle =
+                Box::into_raw(Box::new(kcapi_handle { _unused: [0u8; 0] })) as *mut kcapi_handle;
+
+            let alg =
+                CString::new("pkcs1pad(rsa-generic,sha256)").expect("Failed to create CString");
+
+            let mut ret = crate::kcapi_akcipher_init(&mut handle as *mut _, alg.as_ptr(), 0);
+            assert_eq!(ret, 0);
+
+            let mut hash = [0u8; 32];
+            let mut ret64 = crate::kcapi_md_sha256(
+                pt.as_ptr(),
+                pt.len() as crate::size_t,
+                hash.as_mut_ptr(),
+                hash.len() as crate::size_t,
+            );
+            assert_eq!(hash.len(), ret64 as usize);
+
+            ret = crate::kcapi_akcipher_setpubkey(handle, pubkey.as_ptr(), pubkey.len() as u32);
+            assert_eq!(ret, 256);
+
+            let mut inp = Vec::new();
+            inp.extend(sig.iter().copied());
+            inp.extend(hash.iter().copied());
+            let inp_len: usize = inp.len();
+            inp[inp_len - 1] ^= 0x01;
+
+            let mut out = [0u8; sig.len()];
+            ret64 = crate::kcapi_akcipher_verify(
+                handle,
+                inp.as_ptr(),
+                inp.len() as crate::size_t,
+                out.as_mut_ptr(),
+                out.len() as crate::size_t,
+                crate::KCAPI_ACCESS_HEURISTIC as ::std::os::raw::c_int,
+            );
+            assert!(ret64 < 0);
+        }
+    }
+
+    #[test]
+    #[ignore]
+    fn test_akcipher_verify_key_fail() {
+        unsafe {
+            let mut handle =
+                Box::into_raw(Box::new(kcapi_handle { _unused: [0u8; 0] })) as *mut kcapi_handle;
+
+            let alg =
+                CString::new("pkcs1pad(rsa-generic,sha256)").expect("Failed to create CString");
+
+            let mut ret = crate::kcapi_akcipher_init(&mut handle as *mut _, alg.as_ptr(), 0);
+            assert_eq!(ret, 0);
+
+            let mut hash = [0u8; 32];
+            let mut ret64 = crate::kcapi_md_sha256(
+                pt.as_ptr(),
+                pt.len() as crate::size_t,
+                hash.as_mut_ptr(),
+                hash.len() as crate::size_t,
+            );
+            assert_eq!(hash.len(), ret64 as usize);
+
+            let mut pubkey_corrupt = pubkey.clone();
+            pubkey_corrupt[pubkey.len() - pubkey.len() / 2] ^= 0x01;
+            ret = crate::kcapi_akcipher_setpubkey(
+                handle,
+                pubkey_corrupt.as_ptr(),
+                pubkey_corrupt.len() as u32,
+            );
+            assert_eq!(ret, 256);
+
+            let mut inp = Vec::new();
+            inp.extend(sig.iter().copied());
+            inp.extend(hash.iter().copied());
+
+            let mut out = [0u8; sig.len()];
+            ret64 = crate::kcapi_akcipher_verify(
+                handle,
+                inp.as_ptr(),
+                inp.len() as crate::size_t,
+                out.as_mut_ptr(),
+                out.len() as crate::size_t,
+                crate::KCAPI_ACCESS_HEURISTIC as ::std::os::raw::c_int,
+            );
+            assert!(ret64 < 0);
+        }
     }
 }
