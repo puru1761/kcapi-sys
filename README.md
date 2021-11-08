@@ -1,11 +1,12 @@
 # The Raw Rust Bindings for libkcapi
 
 ![CI Badge](https://github.com/puru1761/libkcapi-sys/actions/workflows/main.yml/badge.svg)
+![License Badge](https://img.shields.io/github/license/puru1761/kcapi-sys)
 
 This repository contains the official raw low-level bindings for
 [libkcapi](https://github.com/smuellerDD/libkcapi/). *DO NOT* use these
 bindings directly in your project. Instead, a safe Rusty API will be provided
-as a part of the `libkcapi-rs` crate.
+as a part of the `kcapi` crate.
 
 ## Pre-requisites
 
@@ -13,7 +14,7 @@ Prior to building this project, clone this repository, and also checkout
 all it's included submodules recursively.
 
 ```
-git clone https://github.com/puru1761/libkcapi-sys.git --recurse-submodules
+git clone https://github.com/puru1761/kcapi-sys.git --recurse-submodules
 ```
 
 Install all build dependencies. These are:
