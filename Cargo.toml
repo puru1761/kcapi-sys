@@ -2,7 +2,7 @@
 name = "kcapi-sys"
 version = "1.1.0"
 edition = "2018"
-license-file = "LICENSE"
+license = "BSD-3-Clause"
 description = "Official low-level Rust bindings for libkcapi"
 homepage = "https://github.com/puru1761/kcapi-sys"
 repository = "https://github.com/puru1761/kcapi-sys/"
