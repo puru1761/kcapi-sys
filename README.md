@@ -2,6 +2,7 @@
 
 ![CI Badge](https://github.com/puru1761/libkcapi-sys/actions/workflows/main.yml/badge.svg)
 ![License Badge](https://img.shields.io/github/license/puru1761/kcapi-sys)
+![Crate Badge](https://img.shields.io/crates/v/kcapi-sys.svg)
 
 This repository contains the official raw low-level bindings for
 [libkcapi](https://github.com/smuellerDD/libkcapi/). *DO NOT* use these
