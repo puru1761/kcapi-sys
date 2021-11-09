@@ -44,7 +44,22 @@ fn main() {
     let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
     let include_path = out_path.join("include");
     let wrapper_h_path = include_path.join("wrapper.h");
-    let dst = autotools::Config::new("libkcapi")
+    let build_path = out_path.join("libkcapi");
+
+    /*
+     * Copy the libkcapi sources to OUT_DIR.
+     * We need to do this because the libkcapi sources are modified by automake,
+     * and this causes package verification errors on running cargo publish.
+     */
+    let mut opts = fs_extra::dir::CopyOptions::new();
+    opts.copy_inside = true;
+    opts.overwrite = true;
+    match fs_extra::dir::copy("libkcapi", out_path.clone(), &opts) {
+        Ok(_ret) => {}
+        Err(e) => panic!("Failed to copy libkcapi to {}: {}", build_path.display(), e),
+    };
+
+    let dst = autotools::Config::new(build_path)
         .reconf("-ivf")
         .enable("lib-asym", None)
         .enable("lib-kpp", None)

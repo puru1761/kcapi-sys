@@ -2,10 +2,25 @@
 name = "kcapi-sys"
 version = "1.0.0"
 edition = "2018"
+license-file = "LICENSE"
+description = "Official low-level Rust bindings for libkcapi"
+homepage = "https://github.com/puru1761/kcapi-sys"
+repository = "https://github.com/puru1761/kcapi-sys/"
+readme = "README.md"
+
+exclude = [
+   "/libkcapi/.git",
+   "/libkcapi/.git/**",
+   "/libkcapi/apps/*.1",
+   "/libkcapi/kernel-patches/**",
+   "/libkcapi/speed-test/**",
+   "/libkcapi/test/**",
+]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [build-dependencies]
 bindgen = "0.53"
 autotools = "0.2"
+fs_extra = "1.2.0"
 
 [dependencies]
