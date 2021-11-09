@@ -37,6 +37,7 @@
 #![allow(non_snake_case)]
 #![allow(deref_nullptr)]
 #![allow(clippy::redundant_static_lifetimes)]
+#![allow(rustdoc::broken_intra_doc_links)]
 include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 
 mod test_aead;
