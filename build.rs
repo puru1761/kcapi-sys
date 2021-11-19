@@ -63,6 +63,7 @@ fn main() {
         .reconf("-ivf")
         .enable("lib-asym", None)
         .enable("lib-kpp", None)
+        .disable("dependency-tracking", None)
         .cflag("-O")
         .build();
 
