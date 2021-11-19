@@ -23,6 +23,8 @@ Install all build dependencies. These are:
 * `autotools`
 * `autoconf`
 * `llvm-dev`
+* `libtool`
+* `build-essential`
 
 ### RPM based package manager
 
@@ -33,7 +35,13 @@ sudo yum install automake autoconf llvm-devel
 ### Debian based package manager
 
 ```
-sudo apt-get install autotools-dev autoconf llvm-dev
+sudo apt-get install \
+    autotools-dev \
+    autoconf \
+    llvm-dev \
+    libtool \
+    build-essential \
+
 ```
 
 If `LLVM_CONFIG_PATH` is not set, then set it with:
