@@ -38,7 +38,7 @@ mod tests {
 
     use crate::{
         kcapi_handle, kcapi_rng_destroy, kcapi_rng_generate, kcapi_rng_get_bytes, kcapi_rng_init,
-        kcapi_rng_seed,
+        kcapi_rng_seed, kcapi_rng_setentropy,
     };
 
     #[test]
@@ -83,6 +83,39 @@ mod tests {
             assert_eq!(ret, out_next.len() as i64);
 
             assert_ne!(out, out_next);
+        }
+    }
+
+    #[test]
+    #[ignore]
+    fn test_rng_setentropy() {
+        let mut ent = [0x41u8; 16];
+        let mut seed = [0x41u8; 16];
+        let mut out = [0u8; 16];
+        let alg = CString::new("drbg_nopr_sha1").expect("Unable to create CString");
+
+        let mut ret: i64;
+        unsafe {
+            let mut handle =
+                Box::into_raw(Box::new(kcapi_handle { _unused: [0u8; 0] })) as *mut kcapi_handle;
+
+            ret = (kcapi_rng_init(&mut handle as *mut _, alg.as_ptr(), 0))
+                .try_into()
+                .expect("Failed to convert i32 to i64");
+            assert_eq!(ret, 0);
+
+            ret = kcapi_rng_setentropy(handle, ent.as_mut_ptr(), ent.len() as u32)
+                .try_into()
+                .expect("Failed to convert i32 to i64");
+            assert_eq!(ret, 0);
+
+            ret = kcapi_rng_seed(handle, seed.as_mut_ptr(), seed.len() as u32)
+                .try_into()
+                .expect("Failed to convert i32 to i64");
+            assert_eq!(ret, 0);
+
+            ret = kcapi_rng_generate(handle, out.as_mut_ptr(), 16);
+            assert_eq!(ret, 16);
         }
     }
 }
