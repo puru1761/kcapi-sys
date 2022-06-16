@@ -35,6 +35,7 @@
  * Build instructions for the libkcapi low-level rust bindings
  */
 use std::env;
+#[cfg(feature = "vendored-kcapi")]
 use std::fs;
 use std::path::PathBuf;
 
