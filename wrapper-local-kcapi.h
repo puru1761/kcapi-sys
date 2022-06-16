@@ -35,7 +35,7 @@
  * Wrapper for the C API of libkcapi if needed.
  */
 
-#include "kcapi.h"
+#include <kcapi.h>
 
 /*
  * Add all wrappers and redefinitions for libkcapi here

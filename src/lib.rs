@@ -40,9 +40,15 @@
 #![allow(rustdoc::broken_intra_doc_links)]
 include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 
+#[cfg(feature = "vendored-kcapi")]
 mod test_aead;
+#[cfg(feature = "vendored-kcapi")]
 mod test_akcipher;
+#[cfg(feature = "vendored-kcapi")]
 mod test_kdf;
+#[cfg(feature = "vendored-kcapi")]
 mod test_md;
+#[cfg(feature = "vendored-kcapi")]
 mod test_rng;
+#[cfg(feature = "vendored-kcapi")]
 mod test_skcipher;

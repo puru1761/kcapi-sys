@@ -17,6 +17,11 @@ exclude = [
    "/libkcapi/test/**",
 ]
 
+[features]
+default = ["vendored-kcapi"]
+vendored-kcapi = []
+local-kcapi = []
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [build-dependencies]
 bindgen = "0.53"

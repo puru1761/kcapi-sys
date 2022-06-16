@@ -40,10 +40,12 @@ use std::path::PathBuf;
 
 const LIB: &str = "kcapi";
 
-fn main() {
+#[cfg(feature = "vendored-kcapi")]
+fn build_vendored() {
+    let wrapper = "wrapper-vendored.h";
     let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
     let include_path = out_path.join("include");
-    let wrapper_h_path = include_path.join("wrapper.h");
+    let wrapper_h_path = include_path.join(wrapper);
     let build_path = out_path.join("libkcapi");
 
     /*
@@ -72,11 +74,11 @@ fn main() {
      * wrappings compile. This is a hack for now until a more standard way
      * is found to do this.
      */
-    match fs::copy("wrapper.h", wrapper_h_path.clone()) {
+    match fs::copy(wrapper, wrapper_h_path.clone()) {
         Ok(_ok) => {}
         Err(e) => {
             panic!(
-                "Unable to copy wrapper.h to {}: {}",
+                "Unable to copy wrapper-vendored.h to {}: {}",
                 wrapper_h_path.display(),
                 e
             );
@@ -85,7 +87,7 @@ fn main() {
 
     println!("cargo:rustc-link-search=native={}/lib", dst.display());
     println!("cargo:rustc-link-lib={}", LIB);
-    println!("cargo:rerun-if-changed=wrapper.h");
+    println!("cargo:rerun-if-changed={}", wrapper);
 
     let bindings = bindgen::Builder::default()
         .header(format!("{}", wrapper_h_path.display()))
@@ -96,4 +98,35 @@ fn main() {
     bindings
         .write_to_file(out_path.join("bindings.rs"))
         .expect("Failed to write libkcapi bindings");
+}
+
+#[cfg(feature = "local-kcapi")]
+fn build_local() {
+    let wrapper = "wrapper-local-kcapi.h";
+    if env::var("LIBKCAPI_DIR").is_ok() {
+        println!(
+            "cargo:rustc-link-search=native={}",
+            env::var("LIBKCAPI_DIR").unwrap()
+        );
+    }
+    println!("cargo:rustc-link-lib={}", LIB);
+    println!("carg:rerun-if-changed={}", wrapper);
+
+    let bindings = bindgen::Builder::default()
+        .header(format!("{}", wrapper))
+        .parse_callbacks(Box::new(bindgen::CargoCallbacks))
+        .generate()
+        .unwrap_or_else(|_| panic!("unable to generate bindings for lib{}", LIB));
+
+    bindings
+        .write_to_file(PathBuf::from(env::var("OUT_DIR").unwrap()).join("bindings.rs"))
+        .expect("Faield to write bindings");
+}
+
+fn main() {
+    #[cfg(feature = "vendored-kcapi")]
+    build_vendored();
+
+    #[cfg(feature = "local-kcapi")]
+    build_local();
 }
