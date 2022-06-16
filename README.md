@@ -58,6 +58,18 @@ We use cargo as our build system for building this crate. Build it using:
 cargo build
 ```
 
+### Build With Local libkcapi
+
+To build this crate with the locally installed version of `libkcapi`, you can
+use the `local-kcapi` feature. In your Cargo.toml:
+
+```
+kcapi-sys = { version = "1.4.0", features = ["local-kcapi"] }
+```
+
+*NOTE:* This has been tested only with `libkcapi v1.4.0` and is not guaranteed
+to work with older libkcapi versions.
+
 ## Test
 
 We have a few sanity tests written to make sure that the bindings work
