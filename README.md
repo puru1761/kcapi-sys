@@ -64,7 +64,7 @@ To build this crate with the locally installed version of `libkcapi`, you can
 use the `local-kcapi` feature. In your Cargo.toml:
 
 ```
-kcapi-sys = { version = "1.4.0", features = ["local-kcapi"] }
+kcapi-sys = { version = "1.4.0", default-features = false, features = ["local-kcapi"] }
 ```
 
 *NOTE:* This has been tested only with `libkcapi v1.4.0` and is not guaranteed
