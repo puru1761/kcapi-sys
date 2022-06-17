@@ -1,6 +1,6 @@
 [package]
 name = "kcapi-sys"
-version = "1.4.0"
+version = "1.4.1"
 edition = "2018"
 license = "BSD-3-Clause"
 description = "Official low-level Rust bindings for libkcapi"
