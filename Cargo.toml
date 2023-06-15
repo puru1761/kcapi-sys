@@ -24,7 +24,7 @@ local-kcapi = []
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [build-dependencies]
-bindgen = "0.53"
+bindgen = "0.55"
 autotools = "0.2"
 fs_extra = "1.2.0"
 
