@@ -45,7 +45,7 @@ mod tests {
     fn test_rng_generate() {
         let mut seed = [0x41u8; 16];
         let mut out = [0u8; 16];
-        let alg = CString::new("drbg_nopr_sha1").expect("Unable to create CString");
+        let alg = CString::new("drbg_nopr_sha256").expect("Unable to create CString");
 
         let mut ret: i64;
         unsafe {
@@ -92,7 +92,7 @@ mod tests {
         let mut ent = [0x41u8; 16];
         let mut seed = [0x41u8; 16];
         let mut out = [0u8; 16];
-        let alg = CString::new("drbg_nopr_sha1").expect("Unable to create CString");
+        let alg = CString::new("drbg_nopr_sha256").expect("Unable to create CString");
 
         let mut ret: i64;
         unsafe {
@@ -129,7 +129,7 @@ mod tests {
             0xbd, 0x3a, 0xbb, 0xfe, 0x98, 0x85, 0x69, 0xbf, 0x64, 0x2f, 0xe9, 0xb3, 0x55, 0xc1,
             0xc0, 0x35,
         ];
-        let alg = CString::new("drbg_nopr_sha1").expect("Unable to create CString");
+        let alg = CString::new("drbg_nopr_sha256").expect("Unable to create CString");
 
         let mut ret: i64;
         unsafe {
