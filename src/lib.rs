@@ -47,6 +47,8 @@ mod test_akcipher;
 #[cfg(feature = "vendored-kcapi")]
 mod test_kdf;
 #[cfg(feature = "vendored-kcapi")]
+mod test_kpp;
+#[cfg(feature = "vendored-kcapi")]
 mod test_md;
 #[cfg(feature = "vendored-kcapi")]
 mod test_rng;
