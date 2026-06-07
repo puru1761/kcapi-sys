@@ -92,9 +92,11 @@ pub mod tests {
             ret = (kcapi_aead_init(&mut handle as *mut _, alg.as_ptr(), 0))
                 .try_into()
                 .expect("Failed to convert i32 to i64");
-            // -ENOENT (-2): gcm(aes) is unavailable on this kernel (e.g. minimal
-            // CI runners). Skip instead of failing when it cannot be loaded.
-            if ret == -2 {
+            // gcm(aes) may be unavailable on the running kernel (e.g. minimal CI
+            // runners): kcapi_aead_init then returns -ENOENT. Skip only in that
+            // case; otherwise assert it succeeded. `ret` is i64, so cast the
+            // c_int constant.
+            if ret == -(libc::ENOENT as i64) {
                 return;
             }
             assert_eq!(ret, 0);
@@ -192,9 +194,11 @@ pub mod tests {
             ret = (kcapi_aead_init(&mut handle as *mut _, alg.as_ptr(), 0))
                 .try_into()
                 .expect("Failed to convert i32 to i64");
-            // -ENOENT (-2): gcm(aes) is unavailable on this kernel (e.g. minimal
-            // CI runners). Skip instead of failing when it cannot be loaded.
-            if ret == -2 {
+            // gcm(aes) may be unavailable on the running kernel (e.g. minimal CI
+            // runners): kcapi_aead_init then returns -ENOENT. Skip only in that
+            // case; otherwise assert it succeeded. `ret` is i64, so cast the
+            // c_int constant.
+            if ret == -(libc::ENOENT as i64) {
                 return;
             }
             assert_eq!(ret, 0);

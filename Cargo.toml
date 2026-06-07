@@ -29,3 +29,6 @@ autotools = "0.2"
 fs_extra = "1.2.0"
 
 [dependencies]
+
+[dev-dependencies]
+libc = "0.2"
