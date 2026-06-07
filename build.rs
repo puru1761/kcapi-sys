@@ -92,7 +92,11 @@ fn build_vendored() {
 
     let bindings = bindgen::Builder::default()
         .header(format!("{}", wrapper_h_path.display()))
-        .parse_callbacks(Box::new(bindgen::CargoCallbacks))
+        .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))
+        // Emit explicit `size_t`/`ssize_t` aliases (as in bindgen <= 0.53) instead
+        // of collapsing them to `usize`/`isize`. Both `kcapi-sys` and `kcapi`
+        // refer to `kcapi_sys::size_t`, so keep the alias for source compatibility.
+        .size_t_is_usize(false)
         .generate()
         .unwrap_or_else(|_| panic!("unable to generate bindings for lib{}", LIB));
 
@@ -115,7 +119,11 @@ fn build_local() {
 
     let bindings = bindgen::Builder::default()
         .header(format!("{}", wrapper))
-        .parse_callbacks(Box::new(bindgen::CargoCallbacks))
+        .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))
+        // Emit explicit `size_t`/`ssize_t` aliases (as in bindgen <= 0.53) instead
+        // of collapsing them to `usize`/`isize`. Both `kcapi-sys` and `kcapi`
+        // refer to `kcapi_sys::size_t`, so keep the alias for source compatibility.
+        .size_t_is_usize(false)
         .generate()
         .unwrap_or_else(|_| panic!("unable to generate bindings for lib{}", LIB));
 
