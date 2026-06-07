@@ -89,6 +89,11 @@ fn build_vendored() {
     println!("cargo:rustc-link-search=native={}/lib", dst.display());
     println!("cargo:rustc-link-lib={}", LIB);
     println!("cargo:rerun-if-changed={}", wrapper);
+    // Re-run this build script (rebuilding libkcapi and regenerating the
+    // bindings) whenever the vendored libkcapi sources change -- e.g. after the
+    // `libkcapi` submodule pointer is bumped. Without this, cargo would serve
+    // stale bindings until a manual `cargo clean -p kcapi-sys`.
+    println!("cargo:rerun-if-changed=libkcapi/lib");
 
     let bindings = bindgen::Builder::default()
         .header(format!("{}", wrapper_h_path.display()))
