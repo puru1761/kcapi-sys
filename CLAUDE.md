@@ -66,6 +66,8 @@ Debian/Ubuntu: `sudo apt-get install -y autoconf automake libtool build-essentia
 
 Because they hit real kernel sockets, tests are sensitive to the running kernel's registered algorithms (`/proc/crypto`). When a test fails with `-ENOENT (-2)`, the algorithm name is missing/renamed on this kernel, not a binding bug — prefer algorithm names that current kernels still register (e.g. `drbg_nopr_sha256`, not the long-removed `drbg_nopr_sha1`).
 
+Some algorithms are simply absent on common CI runners — notably `gcm(aes)`/`ccm(aes)` on GitHub-hosted runners (no `algif_aead`/`gcm`), where `kcapi_aead_init` returns `-ENOENT`. For those, skip rather than fail: right after the `init` call, `if ret == -(libc::ENOENT as i64) { return; }` (a `libc` dev-dependency provides the named constant; `ret` is `i64`, hence the `c_int` cast). Skip only on that specific code — don't broaden to "any negative", which would hide real binding regressions.
+
 ## Relationship to `kcapi`
 
 This crate is consumed by `kcapi` as a path+submodule dependency. A change here that alters the generated surface (new wrapper symbols, bindgen options, a libkcapi pointer bump) usually requires a matching commit in the parent `kcapi` repo to advance the submodule pointer. Keep the FFI surface faithful to libkcapi; put ergonomics in `kcapi`.
