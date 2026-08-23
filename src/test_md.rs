@@ -38,10 +38,7 @@ mod tests {
     use std::ffi::CString;
 
     use crate::{
-        kcapi_handle, kcapi_md_digest, kcapi_md_digestsize, kcapi_md_hmac_sha1,
-        kcapi_md_hmac_sha224, kcapi_md_hmac_sha256, kcapi_md_hmac_sha384, kcapi_md_hmac_sha512,
-        kcapi_md_init, kcapi_md_setkey, kcapi_md_sha1, kcapi_md_sha224, kcapi_md_sha256,
-        kcapi_md_sha384, kcapi_md_sha512,
+        kcapi_handle, kcapi_md_destroy, kcapi_md_digest, kcapi_md_digestsize, kcapi_md_hmac_sha1, kcapi_md_hmac_sha224, kcapi_md_hmac_sha256, kcapi_md_hmac_sha384, kcapi_md_hmac_sha512, kcapi_md_init, kcapi_md_setkey, kcapi_md_sha1, kcapi_md_sha224, kcapi_md_sha256, kcapi_md_sha384, kcapi_md_sha512,
     };
 
     const SIZE_SHA1: usize = 20;
@@ -54,12 +51,15 @@ mod tests {
     fn test_md_init() {
         let ret: i32;
         let alg = CString::new("sha1").expect("Failed to convert CString");
-        unsafe {
-            let mut handle =
-                Box::into_raw(Box::new(kcapi_handle { _unused: [0u8; 0] })) as *mut kcapi_handle;
+        let mut handle: *mut kcapi_handle = std::ptr::null_mut();
+        unsafe {  
             ret = kcapi_md_init(&mut handle as *mut _, alg.as_ptr(), 0);
-        }
+            handle
+        };
         assert_eq!(ret, 0);
+        unsafe {
+            kcapi_md_destroy(handle);
+        }
     }
 
     #[test]
@@ -74,9 +74,8 @@ mod tests {
         ];
 
         let mut ret: i64;
+        let mut handle: *mut kcapi_handle = std::ptr::null_mut();
         unsafe {
-            let mut handle =
-                Box::into_raw(Box::new(kcapi_handle { _unused: [0u8; 0] })) as *mut kcapi_handle;
 
             ret = (kcapi_md_init(&mut handle as *mut _, alg.as_ptr(), 0))
                 .try_into()
@@ -98,6 +97,9 @@ mod tests {
             assert_eq!(ret, SIZE_SHA256 as i64);
         }
         assert_eq!(out_exp, out);
+        unsafe {
+            kcapi_md_destroy(handle);
+        } 
     }
 
     #[test]
@@ -112,11 +114,9 @@ mod tests {
             0xa2, 0x99, 0xd,
         ];
 
+        let mut handle: *mut kcapi_handle = std::ptr::null_mut();
         let mut ret: i64;
         unsafe {
-            let mut handle =
-                Box::into_raw(Box::new(kcapi_handle { _unused: [0u8; 0] })) as *mut kcapi_handle;
-
             ret = (kcapi_md_init(&mut handle as *mut _, alg.as_ptr(), 0))
                 .try_into()
                 .expect("Failed to convert i32 to i64");
@@ -142,6 +142,9 @@ mod tests {
             assert_eq!(ret, SIZE_SHA256 as i64);
         }
         assert_eq!(out_exp, out);
+        unsafe {
+            kcapi_md_destroy(handle);
+        }
     }
 
     #[test]

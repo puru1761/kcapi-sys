@@ -49,8 +49,7 @@ mod tests {
 
         let mut ret: i64;
         unsafe {
-            let mut handle =
-                Box::into_raw(Box::new(kcapi_handle { _unused: [0u8; 0] })) as *mut kcapi_handle;
+            let mut handle: *mut kcapi_handle = std::ptr::null_mut();
 
             ret = (kcapi_rng_init(&mut handle as *mut _, alg.as_ptr(), 0))
                 .try_into()
@@ -96,8 +95,7 @@ mod tests {
 
         let mut ret: i64;
         unsafe {
-            let mut handle =
-                Box::into_raw(Box::new(kcapi_handle { _unused: [0u8; 0] })) as *mut kcapi_handle;
+            let mut handle: *mut kcapi_handle = std::ptr::null_mut();
 
             ret = (kcapi_rng_init(&mut handle as *mut _, alg.as_ptr(), 0))
                 .try_into()
@@ -116,6 +114,7 @@ mod tests {
 
             ret = kcapi_rng_generate(handle, out.as_mut_ptr(), 16);
             assert_eq!(ret, 16);
+            kcapi_rng_destroy(handle);
         }
     }
 
@@ -133,8 +132,7 @@ mod tests {
 
         let mut ret: i64;
         unsafe {
-            let mut handle =
-                Box::into_raw(Box::new(kcapi_handle { _unused: [0u8; 0] })) as *mut kcapi_handle;
+            let mut handle: *mut kcapi_handle = std::ptr::null_mut();
 
             ret = (kcapi_rng_init(&mut handle as *mut _, alg.as_ptr(), 0))
                 .try_into()
@@ -154,6 +152,7 @@ mod tests {
             ret = kcapi_rng_generate(handle, out.as_mut_ptr(), 16);
             assert_eq!(ret, 16);
             assert_eq!(out, out_exp);
+            kcapi_rng_destroy(handle);
         }
     }
 }

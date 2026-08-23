@@ -38,10 +38,10 @@ pub mod tests {
     use std::ffi::CString;
 
     use crate::{
-        kcapi_aead_decrypt, kcapi_aead_encrypt, kcapi_aead_inbuflen_dec, kcapi_aead_inbuflen_enc,
-        kcapi_aead_init, kcapi_aead_outbuflen_dec, kcapi_aead_outbuflen_enc,
-        kcapi_aead_setassoclen, kcapi_aead_setkey, kcapi_aead_settaglen, kcapi_handle,
-        kcapi_pad_iv, KCAPI_ACCESS_HEURISTIC,
+        kcapi_aead_decrypt, kcapi_aead_destroy, kcapi_aead_encrypt, kcapi_aead_inbuflen_dec,
+        kcapi_aead_inbuflen_enc, kcapi_aead_init, kcapi_aead_outbuflen_dec,
+        kcapi_aead_outbuflen_enc, kcapi_aead_setassoclen, kcapi_aead_setkey,
+        kcapi_aead_settaglen, kcapi_handle, kcapi_pad_iv, KCAPI_ACCESS_HEURISTIC,
     };
 
     const AES_BLOCKSIZE: usize = 16;
@@ -86,8 +86,7 @@ pub mod tests {
 
         let mut ret: i64;
         unsafe {
-            let mut handle =
-                Box::into_raw(Box::new(kcapi_handle { _unused: [0u8; 0] })) as *mut kcapi_handle;
+            let mut handle: *mut kcapi_handle = std::ptr::null_mut();
 
             ret = (kcapi_aead_init(&mut handle as *mut _, alg.as_ptr(), 0))
                 .try_into()
@@ -144,6 +143,8 @@ pub mod tests {
 
             ct.clone_from_slice(&outbuf[assocdata.len()..assocdata.len() + pt.len()]);
             tag.clone_from_slice(&outbuf[tag_offset..]);
+
+            kcapi_aead_destroy(handle);
         }
         assert_eq!(ct, ct_exp);
         assert_eq!(tag, tag_exp);
@@ -188,8 +189,7 @@ pub mod tests {
 
         let mut ret: i64;
         unsafe {
-            let mut handle =
-                Box::into_raw(Box::new(kcapi_handle { _unused: [0u8; 0] })) as *mut kcapi_handle;
+            let mut handle: *mut kcapi_handle = std::ptr::null_mut();
 
             ret = (kcapi_aead_init(&mut handle as *mut _, alg.as_ptr(), 0))
                 .try_into()
@@ -245,6 +245,8 @@ pub mod tests {
             assert_eq!(ret, (outbuf.len() - assoclen) as i64);
 
             pt.clone_from_slice(&outbuf[assocdata.len()..assocdata.len() + ct.len()]);
+
+            kcapi_aead_destroy(handle);
         }
         assert_eq!(pt, pt_exp);
     }
