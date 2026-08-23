@@ -146,8 +146,7 @@ pub mod tests {
     #[ignore]
     fn test_akcipher_init() {
         unsafe {
-            let mut handle =
-                Box::into_raw(Box::new(kcapi_handle { _unused: [0u8; 0] })) as *mut kcapi_handle;
+            let mut handle: *mut kcapi_handle = std::ptr::null_mut();
 
             let alg = CString::new("rsa").expect("Failed to create CString");
 
@@ -159,6 +158,7 @@ pub mod tests {
 
             ret = crate::kcapi_akcipher_setpubkey(handle, pubkey.as_ptr(), pubkey.len() as u32);
             assert_eq!(ret, 256);
+            crate::kcapi_akcipher_destroy(handle);
         }
     }
 
@@ -166,8 +166,7 @@ pub mod tests {
     #[ignore]
     fn test_ackipher_enc() {
         unsafe {
-            let mut handle =
-                Box::into_raw(Box::new(kcapi_handle { _unused: [0u8; 0] })) as *mut kcapi_handle;
+            let mut handle: *mut kcapi_handle = std::ptr::null_mut();
 
             let alg = CString::new("rsa").expect("Failed to create CString");
 
@@ -189,6 +188,7 @@ pub mod tests {
             );
             assert_eq!(out, ct);
             assert_eq!(ret64, ct.len() as i64);
+            crate::kcapi_akcipher_destroy(handle);
         }
     }
 
@@ -196,8 +196,7 @@ pub mod tests {
     #[ignore]
     fn test_akcipher_dec() {
         unsafe {
-            let mut handle =
-                Box::into_raw(Box::new(kcapi_handle { _unused: [0u8; 0] })) as *mut kcapi_handle;
+            let mut handle: *mut kcapi_handle = std::ptr::null_mut();
 
             let alg = CString::new("rsa").expect("Failed to create CString");
 
@@ -222,6 +221,7 @@ pub mod tests {
             pt_out.clone_from_slice(&out[out.len() - pt.len()..]);
             assert_eq!(pt_out, pt);
             assert_eq!(ret64, ct.len() as i64);
+            crate::kcapi_akcipher_destroy(handle);
         }
     }
 
@@ -229,8 +229,7 @@ pub mod tests {
     #[ignore]
     fn test_akcipher_sign() {
         unsafe {
-            let mut handle =
-                Box::into_raw(Box::new(kcapi_handle { _unused: [0u8; 0] })) as *mut kcapi_handle;
+            let mut handle: *mut kcapi_handle = std::ptr::null_mut();
 
             let alg =
                 CString::new("pkcs1pad(rsa-generic,sha256)").expect("Failed to create CString");
@@ -261,6 +260,7 @@ pub mod tests {
             );
             assert_eq!(sig, out);
             assert_eq!(out.len(), ret64 as usize);
+            crate::kcapi_akcipher_destroy(handle);
         }
     }
 
@@ -268,8 +268,7 @@ pub mod tests {
     #[ignore]
     fn test_akcipher_verify() {
         unsafe {
-            let mut handle =
-                Box::into_raw(Box::new(kcapi_handle { _unused: [0u8; 0] })) as *mut kcapi_handle;
+            let mut handle: *mut kcapi_handle = std::ptr::null_mut();
 
             let alg =
                 CString::new("pkcs1pad(rsa-generic,sha256)").expect("Failed to create CString");
@@ -303,6 +302,7 @@ pub mod tests {
                 crate::KCAPI_ACCESS_HEURISTIC as ::std::os::raw::c_int,
             );
             assert_eq!(ret64, 0);
+            crate::kcapi_akcipher_destroy(handle);
         }
     }
 
@@ -310,8 +310,7 @@ pub mod tests {
     #[ignore]
     fn test_akcipher_verify_sig_fail() {
         unsafe {
-            let mut handle =
-                Box::into_raw(Box::new(kcapi_handle { _unused: [0u8; 0] })) as *mut kcapi_handle;
+            let mut handle: *mut kcapi_handle = std::ptr::null_mut();
 
             let alg =
                 CString::new("pkcs1pad(rsa-generic,sha256)").expect("Failed to create CString");
@@ -346,6 +345,7 @@ pub mod tests {
                 crate::KCAPI_ACCESS_HEURISTIC as ::std::os::raw::c_int,
             );
             assert!(ret64 < 0);
+            crate::kcapi_akcipher_destroy(handle);
         }
     }
 
@@ -353,8 +353,7 @@ pub mod tests {
     #[ignore]
     fn test_akcipher_verify_digest_fail() {
         unsafe {
-            let mut handle =
-                Box::into_raw(Box::new(kcapi_handle { _unused: [0u8; 0] })) as *mut kcapi_handle;
+            let mut handle: *mut kcapi_handle = std::ptr::null_mut();
 
             let alg =
                 CString::new("pkcs1pad(rsa-generic,sha256)").expect("Failed to create CString");
@@ -390,6 +389,7 @@ pub mod tests {
                 crate::KCAPI_ACCESS_HEURISTIC as ::std::os::raw::c_int,
             );
             assert!(ret64 < 0);
+            crate::kcapi_akcipher_destroy(handle);
         }
     }
 
@@ -397,8 +397,7 @@ pub mod tests {
     #[ignore]
     fn test_akcipher_verify_key_fail() {
         unsafe {
-            let mut handle =
-                Box::into_raw(Box::new(kcapi_handle { _unused: [0u8; 0] })) as *mut kcapi_handle;
+            let mut handle: *mut kcapi_handle = std::ptr::null_mut();
 
             let alg =
                 CString::new("pkcs1pad(rsa-generic,sha256)").expect("Failed to create CString");
@@ -438,6 +437,7 @@ pub mod tests {
                 crate::KCAPI_ACCESS_HEURISTIC as ::std::os::raw::c_int,
             );
             assert!(ret64 < 0);
+            crate::kcapi_akcipher_destroy(handle);
         }
     }
 }

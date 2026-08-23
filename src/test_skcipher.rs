@@ -37,9 +37,7 @@ mod tests {
     use std::{convert::TryInto, ffi::CString};
 
     use crate::{
-        kcapi_cipher_dec_aes_cbc, kcapi_cipher_dec_aes_ctr, kcapi_cipher_decrypt,
-        kcapi_cipher_enc_aes_cbc, kcapi_cipher_enc_aes_ctr, kcapi_cipher_encrypt,
-        kcapi_cipher_init, kcapi_cipher_setkey, kcapi_handle, KCAPI_ACCESS_HEURISTIC,
+        KCAPI_ACCESS_HEURISTIC, kcapi_cipher_dec_aes_cbc, kcapi_cipher_dec_aes_ctr, kcapi_cipher_decrypt, kcapi_cipher_destroy, kcapi_cipher_enc_aes_cbc, kcapi_cipher_enc_aes_ctr, kcapi_cipher_encrypt, kcapi_cipher_init, kcapi_cipher_setkey, kcapi_handle,
     };
 
     const AES_BLOCKSIZE: usize = 16;
@@ -60,11 +58,9 @@ mod tests {
             0x7e,
         ];
 
+        let mut handle: *mut kcapi_handle = std::ptr::null_mut();
         let mut ret: i64;
         unsafe {
-            let mut handle =
-                Box::into_raw(Box::new(kcapi_handle { _unused: [0u8; 0] })) as *mut kcapi_handle;
-
             ret = (kcapi_cipher_init(&mut handle as *mut _, alg.as_ptr(), 0))
                 .try_into()
                 .expect("Failed to convert i32 to i64");
@@ -85,6 +81,7 @@ mod tests {
                 KCAPI_ACCESS_HEURISTIC as i32,
             );
             assert_eq!(ret, pt.len() as i64);
+            kcapi_cipher_destroy(handle);
         }
         assert_eq!(ct_exp, ct);
     }
@@ -102,11 +99,9 @@ mod tests {
 
         let pt_exp = [0x41u8; AES_BLOCKSIZE as usize];
 
+        let mut handle: *mut kcapi_handle = std::ptr::null_mut();
         let mut ret: i64;
         unsafe {
-            let mut handle =
-                Box::into_raw(Box::new(kcapi_handle { _unused: [0u8; 0] })) as *mut kcapi_handle;
-
             ret = (kcapi_cipher_init(&mut handle as *mut _, alg.as_ptr(), 0))
                 .try_into()
                 .expect("Failed to convert i32 to i64");
@@ -129,6 +124,9 @@ mod tests {
             assert_eq!(ret, pt.len() as i64);
         }
         assert_eq!(pt_exp, pt);
+        unsafe{
+            kcapi_cipher_destroy(handle);
+        }
     }
 
     #[test]

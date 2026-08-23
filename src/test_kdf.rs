@@ -36,6 +36,7 @@
 mod tests {
     use std::ffi::CString;
 
+
     #[test]
     fn test_ctr_kdf() {
         const CTR_KDF_KEY: [u8; 32] = [
@@ -60,9 +61,9 @@ mod tests {
         let mut out = [0u8; 16];
 
         let alg = CString::new("hmac(sha256)").expect("Failed to allocate CString");
+
+        let mut handle: *mut crate::kcapi_handle = std::ptr::null_mut();
         unsafe {
-            let mut handle = Box::into_raw(Box::new(crate::kcapi_handle { _unused: [0u8; 0] }))
-                as *mut crate::kcapi_handle;
             let mut ret = crate::kcapi_md_init(&mut handle as *mut _, alg.as_ptr(), 0);
             assert_eq!(ret, 0);
 
@@ -78,6 +79,7 @@ mod tests {
             );
             assert_eq!(ret, 0);
             assert_eq!(CTR_KDF_EXP, out);
+            crate::kcapi_md_destroy(handle);
         }
     }
 
@@ -108,10 +110,9 @@ mod tests {
 
         let mut out = [0u8; 64];
 
+        let mut handle: *mut crate::kcapi_handle = std::ptr::null_mut();
         let alg = CString::new("hmac(sha256)").expect("Failed to allocate CString");
         unsafe {
-            let mut handle = Box::into_raw(Box::new(crate::kcapi_handle { _unused: [0u8; 0] }))
-                as *mut crate::kcapi_handle;
             let mut ret = crate::kcapi_md_init(&mut handle as *mut _, alg.as_ptr(), 0);
             assert_eq!(ret, 0);
 
@@ -127,6 +128,7 @@ mod tests {
             );
             assert_eq!(ret, 0);
             assert_eq!(FB_KDF_EXP, out);
+            crate::kcapi_md_destroy(handle);
         }
     }
 
@@ -155,10 +157,9 @@ mod tests {
 
         let mut out = [0u8; 64];
 
+        let mut handle: *mut crate::kcapi_handle = std::ptr::null_mut();
         let alg = CString::new("hmac(sha256)").expect("Failed to allocate CString");
         unsafe {
-            let mut handle = Box::into_raw(Box::new(crate::kcapi_handle { _unused: [0u8; 0] }))
-                as *mut crate::kcapi_handle;
             let mut ret = crate::kcapi_md_init(&mut handle as *mut _, alg.as_ptr(), 0);
             assert_eq!(ret, 0);
 
@@ -174,6 +175,7 @@ mod tests {
             );
             assert_eq!(ret, 0);
             assert_eq!(DPI_KDF_EXP, out);
+            crate::kcapi_md_destroy(handle);
         }
     }
 
